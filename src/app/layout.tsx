@@ -17,6 +17,8 @@ export const metadata: Metadata = {
   description: 'Find and list properties with ease.',
 };
 
+import { Toaster } from '@/components/ui/sonner';
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -26,7 +28,10 @@ export default function RootLayout({
     <html lang="en" className={cn("h-full", "antialiased", inter.variable, "font-sans", geist.variable)}>
       <body className="min-h-full flex flex-col font-sans">
         <QueryProvider>
-          <AuthHydration>{children}</AuthHydration>
+          <AuthHydration>
+            {children}
+            <Toaster position="top-center" richColors />
+          </AuthHydration>
         </QueryProvider>
       </body>
     </html>
