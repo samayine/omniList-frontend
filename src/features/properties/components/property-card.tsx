@@ -17,10 +17,12 @@ const getBaseUrl = () => {
 };
 
 export function PropertyCard({ property }: PropertyCardProps) {
-  // Grab standard first image or fallback
+  // Grab standard first image or fallback (handle both local uploads and external seeding URLs)
   const firstImage = property.images && property.images.length > 0 
-    ? `${getBaseUrl()}${property.images[0].url}`
-    : '/placeholder.svg'; // Basic fallback inside public dir if needed
+    ? property.images[0].url.startsWith('http') 
+        ? property.images[0].url 
+        : `${getBaseUrl()}${property.images[0].url}`
+    : '/placeholder.svg';
 
   const formatter = new Intl.NumberFormat('en-US', {
     style: 'currency',

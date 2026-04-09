@@ -27,7 +27,9 @@ export function PropertyGallery({ images, title }: PropertyGalleryProps) {
   }
 
   const baseUrl = getBaseUrl();
-  const activeImage = `${baseUrl}${images[activeIndex].url}`;
+  const getImageUrl = (url: string) => url.startsWith('http') ? url : `${baseUrl}${url}`;
+  
+  const activeImage = getImageUrl(images[activeIndex].url);
 
   return (
     <div className="flex flex-col gap-4">
@@ -57,7 +59,7 @@ export function PropertyGallery({ images, title }: PropertyGalleryProps) {
               )}
             >
               <Image
-                src={`${baseUrl}${image.url}`}
+                src={getImageUrl(image.url)}
                 alt={`${title} thumbnail ${idx + 1}`}
                 fill
                 className="object-cover"
