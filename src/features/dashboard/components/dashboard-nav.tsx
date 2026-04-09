@@ -27,7 +27,6 @@ export function DashboardNav() {
 
   const navItems = [
     { name: 'Overview', href: '/dashboard', icon: LayoutDashboard },
-    { name: 'My Properties', href: '/dashboard/properties', icon: Building2 },
     { name: 'New Listing', href: '/dashboard/properties/new', icon: PlusCircle },
     { name: 'Settings', href: '/dashboard/settings', icon: Settings },
   ];
