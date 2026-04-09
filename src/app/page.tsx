@@ -1,7 +1,8 @@
 import { PropertyList } from '@/features/properties/components/property-list';
 
 async function fetchInitialProperties() {
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL;
+  const apiUrl = baseUrl === '/api' ? 'http://localhost:8000/api' : baseUrl || 'http://localhost:8000/api';
   try {
     const res = await fetch(`${apiUrl}/properties?page=1&limit=12`, {
       next: { revalidate: 60 }, // Revalidate every minute
