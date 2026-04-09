@@ -47,3 +47,20 @@ export async function createPropertyApi(input: CreatePropertyInput): Promise<Pro
   const { data } = await api.post<Property>('/properties', input);
   return data;
 }
+
+export type UpdatePropertyInput = Partial<CreatePropertyInput>;
+
+export async function updatePropertyApi(id: string, input: UpdatePropertyInput): Promise<Property> {
+  const { data } = await api.patch<Property>(`/properties/${id}`, input);
+  return data;
+}
+
+export async function publishPropertyApi(id: string): Promise<Property> {
+  const { data } = await api.patch<Property>(`/properties/${id}/publish`);
+  return data;
+}
+
+export async function archivePropertyApi(id: string): Promise<Property> {
+  const { data } = await api.patch<Property>(`/properties/${id}/archive`);
+  return data;
+}

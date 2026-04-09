@@ -2,7 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   // Allow external device connections for JS bundles/HMR
-  allowedDevOrigins: ['10.4.105.94'],
+  allowedDevOrigins: ['10.4.105.94', '172.23.0.1'],
   
   async rewrites() {
     return [

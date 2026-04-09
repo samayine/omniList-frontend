@@ -1,13 +1,14 @@
 'use client';
 
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { format } from 'date-fns';
-import { MoreHorizontal, ExternalLink, Edit } from 'lucide-react';
+import { MoreHorizontal, ExternalLink, Edit, Globe, Archive } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { toast } from 'sonner';
 
 import { useAuthStore } from '@/features/auth/store/auth-store';
-import { getPropertiesApi } from '@/features/properties/api/properties-api';
+import { getPropertiesApi, publishPropertyApi, archivePropertyApi } from '@/features/properties/api/properties-api';
 import { OwnerMetrics } from '@/features/dashboard/components/owner-metrics';
 import { Status } from '@/types';
 
@@ -17,6 +18,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
@@ -29,11 +31,32 @@ const getImageUrl = (url: string) => url.startsWith('http') ? url : `${getBaseUr
 
 export default function DashboardPage() {
   const { user } = useAuthStore();
+  const queryClient = useQueryClient();
 
   const { data, isLoading, error } = useQuery({
     queryKey: ['owner-properties'],
     queryFn: () => getPropertiesApi({ limit: 50 }), 
-    // Secure JWT interceptor scopes this call strictly to the user implicitly via backend controller 
+  });
+
+  const publishMutation = useMutation({
+    mutationFn: publishPropertyApi,
+    onSuccess: () => {
+      toast.success('Property successfully published!');
+      queryClient.invalidateQueries({ queryKey: ['owner-properties'] });
+    },
+    onError: (err: any) => {
+      const msg = err?.response?.data?.message || 'Failed to publish property';
+      toast.error(Array.isArray(msg) ? msg[0] : msg);
+    }
+  });
+
+  const archiveMutation = useMutation({
+    mutationFn: archivePropertyApi,
+    onSuccess: () => {
+      toast.success('Property has been archived.');
+      queryClient.invalidateQueries({ queryKey: ['owner-properties'] });
+    },
+    onError: (err: any) => toast.error('Failed to archive property.')
   });
 
   const properties = data?.data || [];
@@ -46,7 +69,6 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-8 pb-12">
-      {/* Header */}
       <div>
         <h1 className="text-3xl font-bold tracking-tight mb-2">Welcome back.</h1>
         <p className="text-muted-foreground text-lg">
@@ -62,10 +84,8 @@ export default function DashboardPage() {
         </div>
       ) : (
         <>
-          {/* Phase 3 Metrics */}
           <OwnerMetrics properties={properties} />
 
-          {/* Table Container */}
           <div className="mt-8">
             <div className="flex items-center justify-between mb-6">
                <h2 className="text-2xl font-semibold tracking-tight">Recent Listings</h2>
@@ -142,18 +162,41 @@ export default function DashboardPage() {
                                   <MoreHorizontal className="h-4 w-4" />
                                 </Button>
                               </DropdownMenuTrigger>
-                              <DropdownMenuContent align="end">
+                              <DropdownMenuContent align="end" className="w-[200px]">
                                 <DropdownMenuItem asChild>
                                   <Link href={`/dashboard/properties/${prop.id}/edit`} className="cursor-pointer">
                                     <Edit className="h-4 w-4 mr-2" /> Edit Property
                                   </Link>
                                 </DropdownMenuItem>
+                                
+                                {prop.status === Status.DRAFT && (
+                                   <DropdownMenuItem 
+                                     onClick={() => publishMutation.mutate(prop.id)}
+                                     disabled={publishMutation.isPending}
+                                     className="cursor-pointer text-emerald-600 focus:text-emerald-700"
+                                   >
+                                     <Globe className="h-4 w-4 mr-2" /> Publish Live
+                                   </DropdownMenuItem>
+                                )}
+                                
                                 {prop.status === Status.PUBLISHED && (
                                    <DropdownMenuItem asChild>
                                      <Link href={`/properties/${prop.id}`} className="cursor-pointer">
                                        <ExternalLink className="h-4 w-4 mr-2" /> View Public Page
                                      </Link>
                                    </DropdownMenuItem>
+                                )}
+
+                                <DropdownMenuSeparator />
+                                
+                                {prop.status !== Status.ARCHIVED && (
+                                  <DropdownMenuItem 
+                                     onClick={() => archiveMutation.mutate(prop.id)}
+                                     disabled={archiveMutation.isPending}
+                                     className="cursor-pointer text-red-500 focus:text-red-600"
+                                  >
+                                    <Archive className="h-4 w-4 mr-2" /> Archive
+                                  </DropdownMenuItem>
                                 )}
                               </DropdownMenuContent>
                             </DropdownMenu>
