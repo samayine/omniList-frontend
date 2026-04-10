@@ -1,10 +1,15 @@
-import Image from 'next/image';
-import Link from 'next/link';
-import { MapPin, Bed, Bath, Standard } from 'lucide-react';
+import Image from "next/image";
+import Link from "next/link";
+import { MapPin, Bed, Bath } from "lucide-react";
 
-import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Property, Status } from '@/types';
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Property, Status } from "@/types";
 
 type PropertyCardProps = {
   property: Property;
@@ -12,21 +17,22 @@ type PropertyCardProps = {
 
 const getBaseUrl = () => {
   // Extract base URL stripping the /api suffix to serve images from the backend host
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
-  return apiUrl.replace(/\/api$/, '');
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
+  return apiUrl.replace(/\/api$/, "");
 };
 
 export function PropertyCard({ property }: PropertyCardProps) {
   // Grab standard first image or fallback (handle both local uploads and external seeding URLs)
-  const firstImage = property.images && property.images.length > 0 
-    ? property.images[0].url.startsWith('http') 
-        ? property.images[0].url 
+  const firstImage =
+    property.images && property.images.length > 0
+      ? property.images[0].url.startsWith("http")
+        ? property.images[0].url
         : `${getBaseUrl()}${property.images[0].url}`
-    : '/placeholder.svg';
+      : "/placeholder.svg";
 
-  const formatter = new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
+  const formatter = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
     maximumFractionDigits: 0,
   });
 
@@ -50,12 +56,18 @@ export function PropertyCard({ property }: PropertyCardProps) {
               </Badge>
             )}
             {property.status === Status.DRAFT && (
-              <Badge variant="secondary" className="bg-white/90 backdrop-blur-sm text-zinc-800">
+              <Badge
+                variant="secondary"
+                className="bg-white/90 backdrop-blur-sm text-zinc-800"
+              >
                 Draft
               </Badge>
             )}
             {property.status === Status.ARCHIVED && (
-              <Badge variant="destructive" className="bg-red-500/90 backdrop-blur-sm">
+              <Badge
+                variant="destructive"
+                className="bg-red-500/90 backdrop-blur-sm"
+              >
                 Archived
               </Badge>
             )}
@@ -75,7 +87,7 @@ export function PropertyCard({ property }: PropertyCardProps) {
         </CardHeader>
 
         <CardContent className="p-4 pt-1 flex-grow">
-           <p className="text-2xl font-bold text-zinc-900 dark:text-white">
+          <p className="text-2xl font-bold text-zinc-900 dark:text-white">
             {formatter.format(property.price)}
           </p>
         </CardContent>
