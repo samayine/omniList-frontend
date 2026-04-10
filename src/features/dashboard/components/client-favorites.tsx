@@ -3,12 +3,14 @@
 import { useQuery } from '@tanstack/react-query';
 import { Heart, Loader2, Building2 } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 import { getFavoritesApi } from '@/features/properties/api/favorites-api';
 import { PropertyCard } from '@/features/properties/components/property-card';
 import { Button } from '@/components/ui/button';
 
 export function ClientFavorites() {
+  const router = useRouter();
   const { data: favorites, isLoading, error } = useQuery({
     queryKey: ['favorites'],
     queryFn: getFavoritesApi,
@@ -41,8 +43,8 @@ export function ClientFavorites() {
         <p className="text-muted-foreground max-w-sm mb-8">
           You haven't saved any listings yet. Explore our featured properties and tap the heart icon to save them here.
         </p>
-        <Button asChild size="lg" className="rounded-full px-8">
-          <Link href="/">Explore Listings</Link>
+        <Button onClick={() => router.push('/')} size="lg" className="rounded-full px-8">
+          Explore Listings
         </Button>
       </div>
     );
