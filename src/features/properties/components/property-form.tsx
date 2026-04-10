@@ -22,7 +22,9 @@ const propertySchema = z.object({
   price: z.coerce.number().min(1, 'Price must be greater than 0'),
 });
 
-type PropertyFormValues = z.infer<typeof propertySchema>;
+type PropertyFormSchema = typeof propertySchema;
+type PropertyFormValues = z.input<PropertyFormSchema>;
+type PropertyFormOutput = z.output<PropertyFormSchema>;
 
 type PropertyFormProps = {
   initialData?: Property;
@@ -101,7 +103,11 @@ export function PropertyForm({ initialData }: PropertyFormProps) {
     setThumbnails((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const onSubmit = async (data: PropertyFormValues) => {
+  const onSubmit = async (values: PropertyFormValues) => {
+    // Though react-hook-form receives 'values', zodResolver has strictly validated 
+    // and transformed them into our output type ('price' is now a number).
+    const data = values as PropertyFormOutput;
+
     if (!isEditing && selectedFiles.length === 0) {
       toast.error('Please upload at least one image.');
       return;
@@ -162,9 +168,15 @@ export function PropertyForm({ initialData }: PropertyFormProps) {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-           <div className="space-y-2">
+          <div className="space-y-2">
             <Label htmlFor="price">Ask Price (USD) <span className="text-red-500">*</span></Label>
-            <Input id="price" type="number" placeholder="450000" disabled={isUploading} {...register('price')} />
+            <Input 
+              id="price" 
+              type="number" 
+              placeholder="450000" 
+              disabled={isUploading} 
+              {...register('price', { valueAsNumber: true })} 
+            />
             {errors.price && <p className="text-sm text-destructive">{errors.price.message}</p>}
           </div>
 
