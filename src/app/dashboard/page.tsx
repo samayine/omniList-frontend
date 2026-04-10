@@ -82,9 +82,9 @@ export default function DashboardPage() {
 
   // ── Quick links per role ──
   const quickLinks = isAdmin ? [
-    { label: 'Manage Properties', href: '/dashboard/all-properties', icon: Building2 },
+    { label: 'Manage All Properties', href: '/dashboard/all-properties', icon: Building2 },
+    { label: 'Create New Listing', href: '/dashboard/properties/new', icon: FileText },
     { label: 'Manage Users', href: '/dashboard/users', icon: Users },
-    { label: 'View Reports', href: '/dashboard/reports', icon: BarChart3 },
   ] : isOwner ? [
     { label: 'View My Listings', href: '/dashboard/listings', icon: Building2 },
     { label: 'Create New Listing', href: '/dashboard/properties/new', icon: FileText },

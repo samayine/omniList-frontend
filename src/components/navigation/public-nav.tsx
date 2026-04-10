@@ -61,7 +61,7 @@ export function PublicNav() {
                     Favorites
                   </Link>
                 )}
-                {role === 'OWNER' && (
+                {(role === 'OWNER' || role === 'ADMIN') && (
                   <>
                     <Link
                       href="/dashboard/listings"
@@ -106,7 +106,7 @@ export function PublicNav() {
                       <Heart className="h-4 w-4" /> Favorites
                     </DropdownMenuItem>
                   )}
-                  {role === 'OWNER' && (
+                  {(role === 'OWNER' || role === 'ADMIN') && (
                     <>
                       <DropdownMenuItem onClick={() => router.push('/dashboard/listings')} className="cursor-pointer gap-2 md:hidden">
                         <List className="h-4 w-4" /> My Listings

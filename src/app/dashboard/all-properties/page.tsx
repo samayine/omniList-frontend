@@ -63,11 +63,16 @@ export default function AdminPropertiesPage() {
 
   return (
     <div className="space-y-8 pb-20 animate-in fade-in duration-500">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight mb-2">All Properties</h1>
-        <p className="text-muted-foreground text-lg">
-          View and moderate every listing on the platform.
-        </p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight mb-2">All Properties</h1>
+          <p className="text-muted-foreground text-lg">
+            View and moderate every listing on the platform.
+          </p>
+        </div>
+        <Button onClick={() => router.push('/dashboard/properties/new')}>
+          New Listing
+        </Button>
       </div>
 
       <div className="rounded-2xl border bg-card overflow-hidden shadow-sm">
@@ -133,6 +138,9 @@ export default function AdminPropertiesPage() {
                           <MoreHorizontal className="h-4 w-4" />
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="w-[200px]">
+                          <DropdownMenuItem onClick={() => router.push(`/dashboard/properties/${prop.id}/edit`)} className="cursor-pointer">
+                            <Edit className="h-4 w-4 mr-2" /> Edit Details
+                          </DropdownMenuItem>
                           {prop.status !== 'ARCHIVED' && (
                             <DropdownMenuItem
                               onClick={() => disableMutation.mutate(prop.id)}
