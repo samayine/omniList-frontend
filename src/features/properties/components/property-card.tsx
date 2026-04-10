@@ -15,20 +15,17 @@ type PropertyCardProps = {
   property: Property;
 };
 
-const getBaseUrl = () => {
-  // Extract base URL stripping the /api suffix to serve images from the backend host
+const getImageUrl = (url: string) => {
+  if (url.startsWith('http')) return url;
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
-  return apiUrl.replace(/\/api$/, "");
+  const baseUrl = apiUrl.replace(/\/api$/, "");
+  return `${baseUrl}${url}`;
 };
 
 export function PropertyCard({ property }: PropertyCardProps) {
-  // Grab standard first image or fallback (handle both local uploads and external seeding URLs)
-  const firstImage =
-    property.images && property.images.length > 0
-      ? property.images[0].url.startsWith("http")
-        ? property.images[0].url
-        : `${getBaseUrl()}${property.images[0].url}`
-      : "/placeholder.svg";
+  const firstImage = property.images?.[0] 
+    ? getImageUrl(property.images[0].url)
+    : "/placeholder.svg";
 
   const formatter = new Intl.NumberFormat("en-US", {
     style: "currency",

@@ -10,24 +10,12 @@ type PropertyGalleryProps = {
   title: string;
 };
 
-const getBaseUrl = () => {
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
-  return apiUrl.replace(/\/api$/, '');
-};
-
-export function PropertyGallery({ images, title }: PropertyGalleryProps) {
-  const [activeIndex, setActiveIndex] = useState(0);
-
-  if (!images || images.length === 0) {
-    return (
-      <div className="relative aspect-[16/9] w-full max-h-[600px] bg-muted rounded-2xl overflow-hidden flex items-center justify-center border">
-         <span className="text-muted-foreground font-medium">No Images Available</span>
-      </div>
-    );
-  }
-
-  const baseUrl = getBaseUrl();
-  const getImageUrl = (url: string) => url.startsWith('http') ? url : `${baseUrl}${url}`;
+  const getImageUrl = (url: string) => {
+    if (url.startsWith('http')) return url;
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+    const baseUrl = apiUrl.replace(/\/api$/, '');
+    return `${baseUrl}${url}`;
+  };
   
   const activeImage = getImageUrl(images[activeIndex].url);
 

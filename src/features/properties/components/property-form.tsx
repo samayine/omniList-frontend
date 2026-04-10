@@ -30,11 +30,12 @@ type PropertyFormProps = {
   initialData?: Property;
 };
 
-const getBaseUrl = () => {
+const getImageUrl = (url: string) => {
+  if (url.startsWith('http')) return url;
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
-  return apiUrl.replace(/\/api$/, '');
+  const baseUrl = apiUrl.replace(/\/api$/, '');
+  return `${baseUrl}${url}`;
 };
-const getImageUrl = (url: string) => url.startsWith('http') ? url : `${getBaseUrl()}${url}`;
 
 
 export function PropertyForm({ initialData }: PropertyFormProps) {
