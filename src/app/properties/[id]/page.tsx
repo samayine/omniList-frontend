@@ -4,12 +4,15 @@ import { MapPin, ArrowLeft, Building2, Calendar, Share, Heart } from 'lucide-rea
 
 import { Property, Status } from '@/types';
 import { PropertyGallery } from '@/features/properties/components/property-gallery';
+import { FavoriteButton } from '@/features/properties/components/favorite-button';
+import { PublicNav } from '@/components/navigation/public-nav';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 
 async function fetchProperty(id: string): Promise<Property | null> {
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api';
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL;
+  const apiUrl = baseUrl === '/api' ? 'http://localhost:8000/api' : baseUrl || 'http://localhost:8000/api';
   try {
     const res = await fetch(`${apiUrl}/properties/${id}`, {
       next: { revalidate: 30 }, // Revalidate every 30 seconds
@@ -45,6 +48,7 @@ export default async function PropertyDetailPage({
 
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-black font-sans pb-32">
+      <PublicNav />
       <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
         {/* Navigation & Actions */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
@@ -58,12 +62,7 @@ export default async function PropertyDetailPage({
 
           <div className="flex items-center gap-3">
             {/* These buttons are decorative for now, will implement logic later if requested */}
-            <Button variant="outline" size="sm" className="h-9 px-4 rounded-full">
-              <Share className="h-4 w-4 mr-2" /> Share
-            </Button>
-            <Button variant="outline" size="sm" className="h-9 px-4 rounded-full text-rose-500 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30">
-               <Heart className="h-4 w-4 mr-2" /> Save
-            </Button>
+            <FavoriteButton propertyId={property.id} />
           </div>
         </div>
 

@@ -12,7 +12,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { registerApi } from '../api/auth-api';
 import { useAuthStore } from '../store/auth-store';
 import { Role } from '@/types';
@@ -113,25 +112,44 @@ export function RegisterForm() {
               <p className="text-sm text-destructive">{errors.confirmPassword.message}</p>
             )}
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="role">Account Type</Label>
+          <div className="space-y-3">
+            <Label>I want to...</Label>
             <Controller
               control={control}
               name="role"
               render={({ field }) => (
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                  disabled={isLoading}
-                >
-                  <SelectTrigger id="role">
-                    <SelectValue placeholder="Select account type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value={Role.USER}>Regular User (Browse & Favorite)</SelectItem>
-                    <SelectItem value={Role.OWNER}>Property Owner (List & Manage)</SelectItem>
-                  </SelectContent>
-                </Select>
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    type="button"
+                    onClick={() => field.onChange(Role.USER)}
+                    className={`flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all text-center ${
+                      field.value === Role.USER
+                        ? 'border-primary bg-primary/5 shadow-sm'
+                        : 'border-zinc-200 dark:border-zinc-700 hover:border-zinc-300 dark:hover:border-zinc-600'
+                    }`}
+                  >
+                    <span className="text-2xl">🏠</span>
+                    <span className="font-semibold text-sm">Browse</span>
+                    <span className="text-xs text-muted-foreground leading-tight">
+                      Discover & save properties
+                    </span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => field.onChange(Role.OWNER)}
+                    className={`flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all text-center ${
+                      field.value === Role.OWNER
+                        ? 'border-primary bg-primary/5 shadow-sm'
+                        : 'border-zinc-200 dark:border-zinc-700 hover:border-zinc-300 dark:hover:border-zinc-600'
+                    }`}
+                  >
+                    <span className="text-2xl">🔑</span>
+                    <span className="font-semibold text-sm">List Properties</span>
+                    <span className="text-xs text-muted-foreground leading-tight">
+                      Post & manage your listings
+                    </span>
+                  </button>
+                </div>
               )}
             />
             {errors.role && (

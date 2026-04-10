@@ -1,5 +1,7 @@
 import { create } from 'zustand';
 import type { User } from '@/types';
+import { getMeApi } from '@/features/auth/api/auth-api';
+import { api } from '@/lib/api-client';
 
 type AuthState = {
   user: User | null;
@@ -33,26 +35,31 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
 
   logout: () => {
+    // Fire-and-forget server logout (clears any server-side session tracking)
+    api.post('/auth/logout').catch(() => {});
     localStorage.removeItem('accessToken');
     localStorage.removeItem('user');
     clearTokenCookie();
     set({ user: null, token: null, isAuthenticated: false });
   },
 
-  // Called once on app mount to restore state from localStorage
-  hydrate: () => {
+  // Called once on app mount: restore from localStorage, then verify with server
+  hydrate: async () => {
     const token = localStorage.getItem('accessToken');
     const raw = localStorage.getItem('user');
-    if (token && raw) {
-      try {
-        const user = JSON.parse(raw) as User;
-        setTokenCookie(token); // Ensure cookie is in sync
-        set({ user, token, isAuthenticated: true });
-      } catch {
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('user');
-        clearTokenCookie();
-      }
+    if (!token || !raw) return;
+    try {
+      const user = JSON.parse(raw) as User;
+      setTokenCookie(token);
+      set({ user, token, isAuthenticated: true }); // Optimistic restore
+      // Verify token is still valid server-side
+      await getMeApi();
+    } catch {
+      // Token rejected / user deleted — silently clear everything
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('user');
+      clearTokenCookie();
+      set({ user: null, token: null, isAuthenticated: false });
     }
   },
 }));

@@ -41,7 +41,9 @@ export function LoginForm() {
       const response = await loginApi(data.email, data.password);
       login(response.accessToken, response.user);
       toast.success('Successfully logged in!');
-      router.push('/dashboard');
+      // Users browse the public site; owners/admins go to their dashboard
+      const role = response.user?.role;
+      router.push(role === 'USER' ? '/' : '/dashboard');
     } catch (error: unknown) {
       let message = 'Login failed. Please check your credentials.';
       if (axios.isAxiosError(error)) {

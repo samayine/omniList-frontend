@@ -21,10 +21,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         {/* Mobile Header */}
         <header className="h-16 border-b bg-card flex items-center px-4 md:hidden sticky top-0 z-30 shadow-sm shrink-0">
           <Sheet>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="md:hidden mr-2">
-                <Menu className="h-5 w-5" />
-              </Button>
+            <SheetTrigger className="md:hidden mr-2 p-2 inline-flex items-center justify-center rounded-md hover:bg-muted transition-colors">
+              <Menu className="h-5 w-5" />
             </SheetTrigger>
             <SheetContent side="left" className="p-0 w-64 border-r">
                {/* Re-use DashboardNav injected inside a sheet */}

@@ -6,9 +6,10 @@ export type GetPropertiesParams = {
   location?: string;
   minPrice?: number;
   maxPrice?: number;
-  status?: string; // e.g. "PUBLISHED"
+  status?: string;
   page?: number;
   limit?: number;
+  onlyMine?: boolean;
 };
 
 export async function getPropertiesApi(
@@ -62,5 +63,10 @@ export async function publishPropertyApi(id: string): Promise<Property> {
 
 export async function archivePropertyApi(id: string): Promise<Property> {
   const { data } = await api.patch<Property>(`/properties/${id}/archive`);
+  return data;
+}
+
+export async function deletePropertyApi(id: string): Promise<{ message: string }> {
+  const { data } = await api.delete(`/properties/${id}`);
   return data;
 }

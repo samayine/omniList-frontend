@@ -1,4 +1,5 @@
 import { PropertyList } from '@/features/properties/components/property-list';
+import { PublicNav } from '@/components/navigation/public-nav';
 
 async function fetchInitialProperties() {
   const baseUrl = process.env.NEXT_PUBLIC_API_URL;
@@ -23,6 +24,7 @@ export default async function Home() {
 
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-black font-sans pb-24">
+      <PublicNav />
       {/* Hero Section */}
       <section className="relative w-full h-[55vh] min-h-[450px] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-zinc-900 via-zinc-800 to-black z-0" />

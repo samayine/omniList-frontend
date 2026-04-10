@@ -3,10 +3,11 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { LayoutDashboard, Building2, PlusCircle, Settings, LogOut } from 'lucide-react';
+import { LayoutDashboard, Building2, PlusCircle, Settings, LogOut, Heart, Users, BarChart3, List } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 import { useAuthStore } from '@/features/auth/store/auth-store';
+import { Role } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 
@@ -22,14 +23,27 @@ export function DashboardNav() {
 
   const handleLogout = () => {
     logout();
-    router.push('/login');
+    router.push('/');
   };
 
   const navItems = [
     { name: 'Overview', href: '/dashboard', icon: LayoutDashboard },
-    { name: 'New Listing', href: '/dashboard/properties/new', icon: PlusCircle },
+    // Admin
+    { name: 'Properties', href: '/dashboard/all-properties', icon: Building2, roles: [Role.ADMIN] },
+    { name: 'Users', href: '/dashboard/users', icon: Users, roles: [Role.ADMIN] },
+    { name: 'Reports', href: '/dashboard/reports', icon: BarChart3, roles: [Role.ADMIN] },
+    // Owner
+    { name: 'My Listings', href: '/dashboard/listings', icon: List, roles: [Role.OWNER] },
+    { name: 'New Listing', href: '/dashboard/properties/new', icon: PlusCircle, roles: [Role.OWNER] },
+    // User
+    { name: 'My Favorites', href: '/favorites', icon: Heart, roles: [Role.USER] },
+    // All
     { name: 'Settings', href: '/dashboard/settings', icon: Settings },
   ];
+
+  const filteredNavItems = navItems.filter(item => 
+    !item.roles || (user && item.roles.includes(user.role as Role))
+  );
 
   if (!isClient) return <div className="w-64 h-screen border-r bg-muted/20 animate-pulse" />; // Prevent hydration mismatch
 
@@ -42,9 +56,12 @@ export function DashboardNav() {
       </div>
 
       <div className="flex-1 overflow-y-auto py-6 px-4 space-y-1">
-        {navItems.map((item) => {
+        {filteredNavItems.map((item) => {
           const Icon = item.icon;
-          const isActive = pathname === item.href;
+          // Overview uses exact match; all others use startsWith so sub-routes stay highlighted
+          const isActive = item.href === '/dashboard'
+            ? pathname === '/dashboard'
+            : pathname.startsWith(item.href);
           return (
             <Link
               key={item.href}
