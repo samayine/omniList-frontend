@@ -39,11 +39,11 @@ export function PublicNav() {
           {!isAuthenticated ? (
             /* ── Unauthenticated ── */
             <div className="flex items-center gap-2">
-              <Button variant="ghost" asChild className="rounded-full hidden sm:flex">
-                <Link href="/login">Log in</Link>
+              <Button variant="ghost" onClick={() => router.push('/login')} className="rounded-full hidden sm:flex">
+                Log in
               </Button>
-              <Button asChild className="rounded-full px-5">
-                <Link href="/register">Sign up</Link>
+              <Button onClick={() => router.push('/register')} className="rounded-full px-5">
+                Sign up
               </Button>
             </div>
           ) : (

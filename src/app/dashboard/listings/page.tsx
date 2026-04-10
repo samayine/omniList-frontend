@@ -10,6 +10,7 @@ import { toast } from 'sonner';
 import { useAuthStore } from '@/features/auth/store/auth-store';
 import { getPropertiesApi, publishPropertyApi, archivePropertyApi, deletePropertyApi } from '@/features/properties/api/properties-api';
 import { Status } from '@/types';
+import { useRouter } from 'next/navigation';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -30,6 +31,7 @@ const getImageUrl = (url: string) => url.startsWith('http') ? url : `${getBaseUr
 export default function MyListingsPage() {
   const { user } = useAuthStore();
   const queryClient = useQueryClient();
+  const router = useRouter();
 
   const { data: propertiesRes, isLoading } = useQuery({
     queryKey: ['owner-properties'],
@@ -85,8 +87,8 @@ export default function MyListingsPage() {
           <h1 className="text-3xl font-bold tracking-tight mb-2">My Listings</h1>
           <p className="text-muted-foreground text-lg">Manage all your property listings.</p>
         </div>
-        <Button asChild>
-          <Link href="/dashboard/properties/new">New Listing</Link>
+        <Button onClick={() => router.push('/dashboard/properties/new')}>
+          New Listing
         </Button>
       </div>
 
@@ -108,8 +110,8 @@ export default function MyListingsPage() {
                   <td colSpan={5} className="px-6 py-16 text-center text-muted-foreground">
                     <p className="text-lg font-medium mb-2">No listings yet</p>
                     <p className="mb-4">Create your first property listing to get started.</p>
-                    <Button asChild size="sm">
-                      <Link href="/dashboard/properties/new">Create Listing</Link>
+                    <Button onClick={() => router.push('/dashboard/properties/new')} size="sm">
+                      Create Listing
                     </Button>
                   </td>
                 </tr>
@@ -152,10 +154,8 @@ export default function MyListingsPage() {
                           <MoreHorizontal className="h-4 w-4" />
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="w-[200px]">
-                          <DropdownMenuItem asChild>
-                            <Link href={`/dashboard/properties/${prop.id}/edit`} className="cursor-pointer">
-                              <Edit className="h-4 w-4 mr-2" /> Edit
-                            </Link>
+                          <DropdownMenuItem onClick={() => router.push(`/dashboard/properties/${prop.id}/edit`)} className="cursor-pointer">
+                            <Edit className="h-4 w-4 mr-2" /> Edit
                           </DropdownMenuItem>
                           {prop.status === Status.DRAFT && (
                             <DropdownMenuItem
@@ -167,10 +167,8 @@ export default function MyListingsPage() {
                             </DropdownMenuItem>
                           )}
                           {prop.status === Status.PUBLISHED && (
-                            <DropdownMenuItem asChild>
-                              <Link href={`/properties/${prop.id}`} className="cursor-pointer">
-                                <ExternalLink className="h-4 w-4 mr-2" /> View Public Page
-                              </Link>
+                            <DropdownMenuItem onClick={() => router.push(`/properties/${prop.id}`)} className="cursor-pointer">
+                              <ExternalLink className="h-4 w-4 mr-2" /> View Public Page
                             </DropdownMenuItem>
                           )}
                           <DropdownMenuSeparator />

@@ -1,16 +1,16 @@
 import { PropertyForm } from '@/features/properties/components/property-form';
 import { Button } from '@/components/ui/button';
-import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 export default function NewPropertyPage() {
+  const router = useRouter();
+
   return (
     <div className="space-y-6 max-w-4xl pb-12 animate-in fade-in duration-500">
       <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" asChild className="rounded-full">
-          <Link href="/dashboard">
-            <ArrowLeft className="w-5 h-5" />
-          </Link>
+        <Button variant="ghost" size="icon" onClick={() => router.push('/dashboard')} className="rounded-full">
+          <ArrowLeft className="w-5 h-5" />
         </Button>
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Create Listing</h1>

@@ -6,10 +6,11 @@ import { PropertyForm } from '@/features/properties/components/property-form';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { ArrowLeft, Loader2 } from 'lucide-react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 
 export default function EditPropertyPage() {
   const params = useParams();
+  const router = useRouter();
   const propertyId = params.id as string;
 
   const { data: property, isLoading, error } = useQuery({
@@ -32,8 +33,8 @@ export default function EditPropertyPage() {
          <div className="p-8 text-center bg-red-500/10 border border-red-500/20 rounded-2xl max-w-md">
             <h2 className="text-xl font-bold text-red-500 mb-2">Error Loading Property</h2>
             <p className="text-red-400 mb-6">Could not locate the requested property or it was removed.</p>
-            <Button variant="outline" asChild>
-              <Link href="/dashboard">Return to Dashboard</Link>
+            <Button variant="outline" onClick={() => router.push('/dashboard')}>
+              Return to Dashboard
             </Button>
          </div>
       </div>
@@ -43,10 +44,8 @@ export default function EditPropertyPage() {
   return (
     <div className="space-y-6 max-w-4xl pb-12 animate-in fade-in duration-500">
       <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" asChild className="rounded-full">
-          <Link href="/dashboard">
-            <ArrowLeft className="w-5 h-5" />
-          </Link>
+        <Button variant="ghost" size="icon" onClick={() => router.push('/dashboard')} className="rounded-full">
+          <ArrowLeft className="w-5 h-5" />
         </Button>
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Edit Listing</h1>
