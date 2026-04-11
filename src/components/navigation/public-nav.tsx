@@ -61,7 +61,25 @@ export function PublicNav() {
                     Favorites
                   </Link>
                 )}
-                {(role === 'OWNER' || role === 'ADMIN') && (
+                {role === 'ADMIN' && (
+                  <>
+                    <Link
+                      href="/dashboard/all-properties"
+                      className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors rounded-full hover:bg-muted"
+                    >
+                      <List className="h-4 w-4" />
+                      All Properties
+                    </Link>
+                    <Link
+                      href="/dashboard/properties/new"
+                      className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors rounded-full hover:bg-muted"
+                    >
+                      <PlusCircle className="h-4 w-4" />
+                      New Listing
+                    </Link>
+                  </>
+                )}
+                {role === 'OWNER' && (
                   <>
                     <Link
                       href="/dashboard/listings"
@@ -106,7 +124,17 @@ export function PublicNav() {
                       <Heart className="h-4 w-4" /> Favorites
                     </DropdownMenuItem>
                   )}
-                  {(role === 'OWNER' || role === 'ADMIN') && (
+                  {role === 'ADMIN' && (
+                    <>
+                      <DropdownMenuItem onClick={() => router.push('/dashboard/all-properties')} className="cursor-pointer gap-2 md:hidden">
+                        <List className="h-4 w-4" /> All Properties
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => router.push('/dashboard/properties/new')} className="cursor-pointer gap-2 md:hidden">
+                        <PlusCircle className="h-4 w-4" /> New Listing
+                      </DropdownMenuItem>
+                    </>
+                  )}
+                  {role === 'OWNER' && (
                     <>
                       <DropdownMenuItem onClick={() => router.push('/dashboard/listings')} className="cursor-pointer gap-2 md:hidden">
                         <List className="h-4 w-4" /> My Listings

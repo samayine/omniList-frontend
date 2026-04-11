@@ -53,7 +53,8 @@ export function RegisterForm() {
       const response = await registerApi(data.email, data.password, data.role);
       login(response.accessToken, response.user);
       toast.success('Account created successfully!');
-      router.push('/dashboard');
+      const role = response.user?.role;
+      router.push(role === 'USER' ? '/' : '/dashboard');
     } catch (error: unknown) {
       let message = 'Registration failed. Please try again.';
       if (axios.isAxiosError(error)) {
