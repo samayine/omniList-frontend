@@ -1,14 +1,16 @@
 'use client';
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
 import { format } from 'date-fns';
-import { MoreHorizontal, Archive, RotateCcw } from 'lucide-react';
+import { MoreHorizontal, Archive, RotateCcw, Edit } from 'lucide-react';
 import Image from 'next/image';
 import { toast } from 'sonner';
 
 import { getAdminProperties, disablePropertyApi, restorePropertyApi } from '@/features/admin/api/admin-api';
 
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,6 +26,7 @@ const getImageUrl = (url: string) => url.startsWith('http') ? url : `${getBaseUr
 
 export default function AdminPropertiesPage() {
   const queryClient = useQueryClient();
+  const router = useRouter();
 
   const { data: properties, isLoading } = useQuery({
     queryKey: ['admin-properties'],
