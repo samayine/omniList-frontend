@@ -39,7 +39,7 @@ export function PublicNav() {
           {!isAuthenticated ? (
             /* ── Unauthenticated ── */
             <div className="flex items-center gap-2">
-              <Button variant="ghost" onClick={() => router.push('/login')} className="rounded-full hidden sm:flex text-foreground hover:text-foreground">
+              <Button variant="outline" onClick={() => router.push('/login')} className="rounded-full hidden sm:flex border-zinc-300 dark:border-zinc-600 text-zinc-900 dark:text-zinc-100 hover:bg-zinc-100 dark:hover:bg-zinc-800">
                 Log in
               </Button>
               <Button onClick={() => router.push('/register')} className="rounded-full px-5">
