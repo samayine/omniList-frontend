@@ -27,7 +27,7 @@ export function PublicNav() {
   const role = user?.role;
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-white/80 dark:bg-zinc-950/80 backdrop-blur-md">
+    <header className="sticky top-0 z-50 w-full border-b bg-white dark:bg-zinc-950 backdrop-blur-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
         
         {/* Logo */}
