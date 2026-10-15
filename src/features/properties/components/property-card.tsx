@@ -1,11 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
-import { MapPin } from "lucide-react";
+import { MapPin, Bed, Bath, Maximize2 } from "lucide-react";
 
 import {
   Card,
   CardContent,
   CardHeader,
+  CardFooter,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Property, Status } from "@/types";
@@ -68,6 +69,13 @@ export function PropertyCard({ property }: PropertyCardProps) {
               </Badge>
             )}
           </div>
+          {property.propertyType && (
+            <div className="absolute top-4 right-4">
+              <Badge variant="outline" className="bg-black/60 backdrop-blur-md text-white border-white/20 capitalize font-medium text-xs">
+                {property.propertyType.toLowerCase()}
+              </Badge>
+            </div>
+          )}
         </div>
 
         <CardHeader className="p-4 pb-2">
@@ -87,11 +95,31 @@ export function PropertyCard({ property }: PropertyCardProps) {
             {formatter.format(property.price)}
           </p>
         </CardContent>
-        {/*
-        <CardFooter className="p-4 pt-0 text-muted-foreground text-sm flex gap-4">
-           If there were extra specs, we'd add them here
-        </CardFooter>
-        */}
+
+        {(property.bedrooms != null || property.bathrooms != null || property.areaSqFt != null) && (
+          <CardFooter className="px-4 py-3 text-muted-foreground text-xs flex items-center justify-between border-t border-zinc-100 dark:border-zinc-800/80 bg-zinc-50/50 dark:bg-zinc-900/50">
+            <div className="flex items-center gap-4 text-xs font-medium">
+              {property.bedrooms != null && (
+                <span className="flex items-center gap-1.5 text-zinc-700 dark:text-zinc-300">
+                  <Bed className="h-3.5 w-3.5 text-muted-foreground" />
+                  {property.bedrooms} {property.bedrooms === 1 ? 'bed' : 'beds'}
+                </span>
+              )}
+              {property.bathrooms != null && (
+                <span className="flex items-center gap-1.5 text-zinc-700 dark:text-zinc-300">
+                  <Bath className="h-3.5 w-3.5 text-muted-foreground" />
+                  {property.bathrooms} {property.bathrooms === 1 ? 'bath' : 'baths'}
+                </span>
+              )}
+              {property.areaSqFt != null && (
+                <span className="flex items-center gap-1.5 text-zinc-700 dark:text-zinc-300">
+                  <Maximize2 className="h-3.5 w-3.5 text-muted-foreground" />
+                  {property.areaSqFt.toLocaleString()} sq ft
+                </span>
+              )}
+            </div>
+          </CardFooter>
+        )}
       </Card>
     </Link>
   );

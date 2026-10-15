@@ -12,6 +12,15 @@ export enum Status {
   ARCHIVED = 'ARCHIVED',
 }
 
+export enum PropertyType {
+  APARTMENT = 'APARTMENT',
+  HOUSE = 'HOUSE',
+  CONDO = 'CONDO',
+  VILLA = 'VILLA',
+  TOWNHOUSE = 'TOWNHOUSE',
+  COMMERCIAL = 'COMMERCIAL',
+}
+
 export type User = {
   id: string;
   email: string;
@@ -33,6 +42,11 @@ export type Property = {
   location: string;
   price: number;
   status: Status;
+  propertyType?: PropertyType;
+  bedrooms?: number | null;
+  bathrooms?: number | null;
+  areaSqFt?: number | null;
+  amenities?: string[];
   publishedAt: string | null;
   createdAt: string;
   updatedAt: string;

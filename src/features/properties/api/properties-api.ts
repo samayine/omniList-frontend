@@ -1,5 +1,5 @@
 import { api } from '@/lib/api-client';
-import type { PaginatedResponse, Property } from '@/types';
+import type { PaginatedResponse, Property, PropertyType } from '@/types';
 
 export type GetPropertiesParams = {
   search?: string;
@@ -7,6 +7,9 @@ export type GetPropertiesParams = {
   minPrice?: number;
   maxPrice?: number;
   status?: string;
+  propertyType?: PropertyType;
+  minBedrooms?: number;
+  minBathrooms?: number;
   page?: number;
   limit?: number;
   onlyMine?: boolean;
@@ -41,6 +44,11 @@ export type CreatePropertyInput = {
   description: string;
   location: string;
   price: number;
+  propertyType?: PropertyType;
+  bedrooms?: number;
+  bathrooms?: number;
+  areaSqFt?: number;
+  amenities?: string[];
   images?: { url: string; mimeType: string; sizeBytes: number }[];
 };
 

@@ -14,13 +14,32 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { uploadImagesApi, createPropertyApi, updatePropertyApi } from '@/features/properties/api/properties-api';
-import { Property } from '@/types';
+import { Property, PropertyType } from '@/types';
+
+const AVAILABLE_AMENITIES = [
+  'Pool',
+  'Gym',
+  'Parking',
+  'Air Conditioning',
+  'Balcony / Terrace',
+  'Pet Friendly',
+  'Elevator',
+  'Security System',
+  'Furnished',
+  'High-speed Internet',
+  'Garden',
+  'Ocean / Mountain View',
+];
 
 const propertySchema = z.object({
   title: z.string().min(3, 'Title must be at least 3 characters'),
   description: z.string().min(10, 'Description must be at least 10 characters'),
   location: z.string().min(3, 'Location must be at least 3 characters'),
   price: z.coerce.number().min(1, 'Price must be greater than 0'),
+  propertyType: z.nativeEnum(PropertyType).default(PropertyType.APARTMENT),
+  bedrooms: z.coerce.number().min(0).optional(),
+  bathrooms: z.coerce.number().min(0).optional(),
+  areaSqFt: z.coerce.number().min(0).optional(),
 });
 
 type PropertyFormSchema = typeof propertySchema;
@@ -38,12 +57,12 @@ const getImageUrl = (url: string) => {
   return `${baseUrl}${url}`;
 };
 
-
 export function PropertyForm({ initialData }: PropertyFormProps) {
   const router = useRouter();
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [thumbnails, setThumbnails] = useState<string[]>([]);
   const [isUploading, setIsUploading] = useState(false);
+  const [selectedAmenities, setSelectedAmenities] = useState<string[]>(initialData?.amenities ?? []);
 
   const isEditing = !!initialData;
 
@@ -54,7 +73,15 @@ export function PropertyForm({ initialData }: PropertyFormProps) {
        description: initialData.description,
        location: initialData.location,
        price: initialData.price,
-    } : undefined,
+       propertyType: initialData.propertyType ?? PropertyType.APARTMENT,
+       bedrooms: initialData.bedrooms ?? 1,
+       bathrooms: initialData.bathrooms ?? 1,
+       areaSqFt: initialData.areaSqFt ?? undefined,
+    } : {
+       propertyType: PropertyType.APARTMENT,
+       bedrooms: 1,
+       bathrooms: 1,
+    },
   });
 
   // Hydrate existing DB images into the visual UI purely natively if Editing
@@ -105,6 +132,12 @@ export function PropertyForm({ initialData }: PropertyFormProps) {
     setThumbnails((prev) => prev.filter((_, i) => i !== index));
   };
 
+  const toggleAmenity = (amenity: string) => {
+    setSelectedAmenities((prev) =>
+      prev.includes(amenity) ? prev.filter((a) => a !== amenity) : [...prev, amenity]
+    );
+  };
+
   const onSubmit = async (values: PropertyFormValues) => {
     // Though react-hook-form receives 'values', zodResolver has strictly validated 
     // and transformed them into our output type ('price' is now a number).
@@ -135,17 +168,17 @@ export function PropertyForm({ initialData }: PropertyFormProps) {
 
       toast.info(isEditing ? 'Saving property changes...' : 'Saving property details...');
       
+      const payload = {
+        ...data,
+        amenities: selectedAmenities,
+        images: finalImageMeta,
+      };
+
       if (isEditing) {
-         await updatePropertyApi(initialData!.id, {
-            ...data,
-            images: finalImageMeta,
-         });
+         await updatePropertyApi(initialData!.id, payload);
          toast.success('Property successfully updated!');
       } else {
-         await createPropertyApi({
-           ...data,
-           images: finalImageMeta,
-         });
+         await createPropertyApi(payload);
          toast.success('Property successfully created!');
       }
 
@@ -189,6 +222,95 @@ export function PropertyForm({ initialData }: PropertyFormProps) {
             <Label htmlFor="location">Location <span className="text-red-500">*</span></Label>
             <Input id="location" placeholder="Beverly Hills, CA" disabled={isUploading} {...register('location')} />
             {errors.location && <p className="text-sm text-destructive">{errors.location.message}</p>}
+          </div>
+        </div>
+
+        {/* Real Estate Specifications */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-900/60 border border-zinc-200/70 dark:border-zinc-800">
+          <div className="space-y-2">
+            <Label htmlFor="propertyType">Property Type</Label>
+            <select
+              id="propertyType"
+              disabled={isUploading}
+              {...register('propertyType')}
+              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              <option value={PropertyType.APARTMENT}>Apartment</option>
+              <option value={PropertyType.HOUSE}>House</option>
+              <option value={PropertyType.CONDO}>Condo</option>
+              <option value={PropertyType.VILLA}>Villa</option>
+              <option value={PropertyType.TOWNHOUSE}>Townhouse</option>
+              <option value={PropertyType.COMMERCIAL}>Commercial</option>
+            </select>
+            {errors.propertyType && <p className="text-xs text-destructive">{errors.propertyType.message}</p>}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="bedrooms">Bedrooms</Label>
+            <Input
+              id="bedrooms"
+              type="number"
+              min="0"
+              placeholder="e.g. 3"
+              disabled={isUploading}
+              {...register('bedrooms', { valueAsNumber: true })}
+            />
+            {errors.bedrooms && <p className="text-xs text-destructive">{errors.bedrooms.message}</p>}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="bathrooms">Bathrooms</Label>
+            <Input
+              id="bathrooms"
+              type="number"
+              step="0.5"
+              min="0"
+              placeholder="e.g. 2.5"
+              disabled={isUploading}
+              {...register('bathrooms', { valueAsNumber: true })}
+            />
+            {errors.bathrooms && <p className="text-xs text-destructive">{errors.bathrooms.message}</p>}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="areaSqFt">Floor Area (sq ft)</Label>
+            <Input
+              id="areaSqFt"
+              type="number"
+              min="0"
+              placeholder="e.g. 1850"
+              disabled={isUploading}
+              {...register('areaSqFt', { valueAsNumber: true })}
+            />
+            {errors.areaSqFt && <p className="text-xs text-destructive">{errors.areaSqFt.message}</p>}
+          </div>
+        </div>
+
+        {/* Amenities Selection */}
+        <div className="space-y-3">
+          <div>
+            <Label>Amenities & Highlights</Label>
+            <p className="text-xs text-muted-foreground mt-0.5">Click to toggle amenities included in this property.</p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {AVAILABLE_AMENITIES.map((amenity) => {
+              const isSelected = selectedAmenities.includes(amenity);
+              return (
+                <button
+                  key={amenity}
+                  type="button"
+                  onClick={() => toggleAmenity(amenity)}
+                  disabled={isUploading}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all border ${
+                    isSelected
+                      ? 'bg-primary text-primary-foreground border-primary shadow-xs'
+                      : 'bg-background hover:bg-muted text-muted-foreground border-input'
+                  }`}
+                >
+                  {isSelected ? `✓ ${amenity}` : `+ ${amenity}`}
+                </button>
+              );
+            })}
           </div>
         </div>
 

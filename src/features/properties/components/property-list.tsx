@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { PropertyCard } from './property-card';
 import { getPropertiesApi } from '../api/properties-api';
-import type { PaginatedResponse, Property } from '@/types';
+import { type PaginatedResponse, type Property, PropertyType } from '@/types';
 
 type PropertyListProps = {
   initialData: PaginatedResponse<Property>;
@@ -28,6 +28,8 @@ export function PropertyList({ initialData }: PropertyListProps) {
   const [page, setPage] = useState(1);
   const [minPrice, setMinPrice] = useState('');
   const [maxPrice, setMaxPrice] = useState('');
+  const [selectedType, setSelectedType] = useState<PropertyType | ''>('');
+  const [minBeds, setMinBeds] = useState<string>('');
   const [showFilters, setShowFilters] = useState(false);
   const limit = 12;
 
@@ -36,21 +38,28 @@ export function PropertyList({ initialData }: PropertyListProps) {
   const debouncedMax = useDebounce(maxPrice, 500);
 
   // Reset to page 1 when filters change (render-phase state adjustment)
-  const filterKey = `${debouncedSearch}|${debouncedMin}|${debouncedMax}`;
+  const filterKey = `${debouncedSearch}|${debouncedMin}|${debouncedMax}|${selectedType}|${minBeds}`;
   const [prevFilterKey, setPrevFilterKey] = useState(filterKey);
   if (prevFilterKey !== filterKey) {
     setPrevFilterKey(filterKey);
     setPage(1);
   }
 
-  const isFiltering = debouncedSearch.length > 0 || debouncedMin.length > 0 || debouncedMax.length > 0;
+  const isFiltering =
+    debouncedSearch.length > 0 ||
+    debouncedMin.length > 0 ||
+    debouncedMax.length > 0 ||
+    selectedType !== '' ||
+    minBeds !== '';
 
   const { data, isLoading, isFetching } = useQuery({
-    queryKey: ['properties', debouncedSearch, debouncedMin, debouncedMax, page],
+    queryKey: ['properties', debouncedSearch, debouncedMin, debouncedMax, selectedType, minBeds, page],
     queryFn: () => getPropertiesApi({
       search: debouncedSearch || undefined,
       minPrice: debouncedMin ? Number(debouncedMin) : undefined,
       maxPrice: debouncedMax ? Number(debouncedMax) : undefined,
+      propertyType: selectedType ? selectedType : undefined,
+      minBedrooms: minBeds ? Number(minBeds) : undefined,
       page,
       limit,
     }),
@@ -65,6 +74,8 @@ export function PropertyList({ initialData }: PropertyListProps) {
     setSearch('');
     setMinPrice('');
     setMaxPrice('');
+    setSelectedType('');
+    setMinBeds('');
     setPage(1);
   };
 
@@ -109,41 +120,108 @@ export function PropertyList({ initialData }: PropertyListProps) {
 
         {/* Filter Panel */}
         {showFilters && (
-          <div className="bg-background/90 backdrop-blur-md rounded-xl border border-zinc-200 dark:border-zinc-800 shadow-lg p-4 animate-in fade-in slide-in-from-top-2 duration-200">
-            <div className="flex items-center justify-between mb-3">
-              <p className="text-sm font-medium text-muted-foreground">Price Range</p>
-              {(minPrice || maxPrice) && (
-                <button onClick={() => { setMinPrice(''); setMaxPrice(''); }} className="text-xs text-primary hover:underline">
-                  Clear
-                </button>
-              )}
+          <div className="bg-background/90 backdrop-blur-md rounded-xl border border-zinc-200 dark:border-zinc-800 shadow-lg p-5 space-y-4 animate-in fade-in slide-in-from-top-2 duration-200">
+            {/* Property Types */}
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Property Type</p>
+                {selectedType && (
+                  <button onClick={() => setSelectedType('')} className="text-xs text-primary hover:underline">
+                    Reset
+                  </button>
+                )}
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {[
+                  { label: 'All Types', value: '' },
+                  { label: 'Apartment', value: PropertyType.APARTMENT },
+                  { label: 'House', value: PropertyType.HOUSE },
+                  { label: 'Condo', value: PropertyType.CONDO },
+                  { label: 'Villa', value: PropertyType.VILLA },
+                  { label: 'Townhouse', value: PropertyType.TOWNHOUSE },
+                ].map((typeOption) => (
+                  <button
+                    key={typeOption.label}
+                    onClick={() => setSelectedType(typeOption.value as PropertyType | '')}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all border ${
+                      selectedType === typeOption.value
+                        ? 'bg-primary text-primary-foreground border-primary shadow-xs'
+                        : 'bg-muted/50 hover:bg-muted text-muted-foreground border-transparent'
+                    }`}
+                  >
+                    {typeOption.label}
+                  </button>
+                ))}
+              </div>
             </div>
-            <div className="flex items-center gap-3">
-              <Input
-                type="number"
-                placeholder="Min price"
-                value={minPrice}
-                onChange={(e) => setMinPrice(e.target.value)}
-                className="h-10 text-sm"
-              />
-              <span className="text-muted-foreground text-sm shrink-0">to</span>
-              <Input
-                type="number"
-                placeholder="Max price"
-                value={maxPrice}
-                onChange={(e) => setMaxPrice(e.target.value)}
-                className="h-10 text-sm"
-              />
+
+            {/* Price Range and Bedrooms Row */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Price Range</p>
+                  {(minPrice || maxPrice) && (
+                    <button onClick={() => { setMinPrice(''); setMaxPrice(''); }} className="text-xs text-primary hover:underline">
+                      Reset
+                    </button>
+                  )}
+                </div>
+                <div className="flex items-center gap-2">
+                  <Input
+                    type="number"
+                    placeholder="Min price"
+                    value={minPrice}
+                    onChange={(e) => setMinPrice(e.target.value)}
+                    className="h-9 text-sm"
+                  />
+                  <span className="text-muted-foreground text-xs shrink-0">to</span>
+                  <Input
+                    type="number"
+                    placeholder="Max price"
+                    value={maxPrice}
+                    onChange={(e) => setMaxPrice(e.target.value)}
+                    className="h-9 text-sm"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Min Bedrooms</p>
+                  {minBeds && (
+                    <button onClick={() => setMinBeds('')} className="text-xs text-primary hover:underline">
+                      Reset
+                    </button>
+                  )}
+                </div>
+                <div className="flex items-center gap-1.5">
+                  {['', '1', '2', '3', '4'].map((bed) => (
+                    <button
+                      key={bed || 'any'}
+                      onClick={() => setMinBeds(bed)}
+                      className={`flex-1 h-9 rounded-lg text-xs font-medium transition-all border ${
+                        minBeds === bed
+                          ? 'bg-primary text-primary-foreground border-primary shadow-xs'
+                          : 'bg-muted/50 hover:bg-muted text-muted-foreground border-transparent'
+                      }`}
+                    >
+                      {bed ? `${bed}+ beds` : 'Any'}
+                    </button>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
         )}
 
         {/* Active filter summary */}
         {isFiltering && (
-          <div className="flex items-center justify-between text-xs text-muted-foreground px-1">
+          <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground px-1">
             <p>
               {meta.total} result{meta.total !== 1 ? 's' : ''} found
               {debouncedSearch && <> for &quot;<span className="font-medium text-foreground">{debouncedSearch}</span>&quot;</>}
+              {selectedType && <> · <span className="font-medium text-foreground capitalize">{selectedType.toLowerCase()}</span></>}
+              {minBeds && <> · <span className="font-medium text-foreground">{minBeds}+ beds</span></>}
               {(debouncedMin || debouncedMax) && (
                 <> · {debouncedMin ? formatter.format(Number(debouncedMin)) : '$0'} – {debouncedMax ? formatter.format(Number(debouncedMax)) : '∞'}</>
               )}

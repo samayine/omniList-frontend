@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { MapPin, ArrowLeft, Building2, Calendar } from 'lucide-react';
+import { MapPin, ArrowLeft, Building2, Calendar, Bed, Bath, Maximize2 } from 'lucide-react';
 
 import { Property, Status } from '@/types';
 import { PropertyGallery } from '@/features/properties/components/property-gallery';
@@ -105,29 +105,85 @@ export default async function PropertyDetailPage({
               </div>
             </div>
             
-            {/* Added specs area to make it feel premium */}
-            <div className="bg-white dark:bg-zinc-900 border shadow-sm rounded-2xl p-6 flex flex-col sm:flex-row gap-6 sm:gap-12">
-              <div className="flex items-center gap-4">
-                <div className="p-3 bg-primary/10 rounded-xl text-primary">
-                  <Building2 className="h-6 w-6" />
+            {/* Property Overview / Specs Grid */}
+            <div className="bg-white dark:bg-zinc-900 border rounded-2xl p-6 shadow-sm">
+              <h2 className="text-lg font-semibold tracking-tight mb-4 text-foreground">Property Overview</h2>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                <div className="flex items-center gap-3 p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-100 dark:border-zinc-800">
+                  <div className="p-2.5 bg-primary/10 rounded-lg text-primary">
+                    <Building2 className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground font-medium">Type</p>
+                    <p className="font-semibold text-foreground text-sm capitalize">
+                      {property.propertyType ? property.propertyType.toLowerCase() : 'Apartment'}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                   <p className="text-sm text-muted-foreground font-medium">Property Type</p>
-                   <p className="font-semibold text-foreground">Premium Listing</p>
+
+                <div className="flex items-center gap-3 p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-100 dark:border-zinc-800">
+                  <div className="p-2.5 bg-primary/10 rounded-lg text-primary">
+                    <Bed className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground font-medium">Bedrooms</p>
+                    <p className="font-semibold text-foreground text-sm">
+                      {property.bedrooms != null ? property.bedrooms : '—'}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3 p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-100 dark:border-zinc-800">
+                  <div className="p-2.5 bg-primary/10 rounded-lg text-primary">
+                    <Bath className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground font-medium">Bathrooms</p>
+                    <p className="font-semibold text-foreground text-sm">
+                      {property.bathrooms != null ? property.bathrooms : '—'}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3 p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-100 dark:border-zinc-800">
+                  <div className="p-2.5 bg-primary/10 rounded-lg text-primary">
+                    <Maximize2 className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground font-medium">Area</p>
+                    <p className="font-semibold text-foreground text-sm">
+                      {property.areaSqFt != null ? `${property.areaSqFt.toLocaleString()} sq ft` : '—'}
+                    </p>
+                  </div>
                 </div>
               </div>
-              <div className="flex items-center gap-4">
-                <div className="p-3 bg-primary/10 rounded-xl text-primary">
-                  <Calendar className="h-6 w-6" />
-                </div>
-                <div>
-                   <p className="text-sm text-muted-foreground font-medium">Listed Info</p>
-                   <p className="font-semibold text-foreground">
-                     {property.publishedAt ? new Date(property.publishedAt).toLocaleDateString() : 'Unpublished'}
-                   </p>
-                </div>
+
+              <div className="mt-4 pt-4 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-between text-xs text-muted-foreground">
+                <span className="flex items-center gap-1.5">
+                  <Calendar className="h-4 w-4" />
+                  Listed: {property.publishedAt ? new Date(property.publishedAt).toLocaleDateString() : 'Unpublished (Draft)'}
+                </span>
+                <span>ID: {property.id}</span>
               </div>
             </div>
+
+            {/* Amenities Section */}
+            {property.amenities && property.amenities.length > 0 && (
+              <div className="space-y-4">
+                <h2 className="text-xl font-semibold tracking-tight text-foreground">Amenities & Key Features</h2>
+                <div className="flex flex-wrap gap-2.5">
+                  {property.amenities.map((amenity) => (
+                    <div
+                      key={amenity}
+                      className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-medium bg-white dark:bg-zinc-900 border shadow-xs text-zinc-800 dark:text-zinc-200"
+                    >
+                      <span className="text-emerald-500 font-bold">✓</span>
+                      <span>{amenity}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Sidebar / CTA */}
