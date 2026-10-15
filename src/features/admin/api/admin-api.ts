@@ -1,4 +1,5 @@
 import { api } from '@/lib/api-client';
+import type { Property } from '@/types';
 
 export type AdminMetrics = {
   users: number;
@@ -11,13 +12,17 @@ export type AdminMetrics = {
   favorites: number;
 };
 
+export type AdminProperty = Property & {
+  favorites?: { id: string; userId: string }[];
+};
+
 export async function getAdminMetrics(): Promise<AdminMetrics> {
   const { data } = await api.get<AdminMetrics>('/admin/metrics');
   return data;
 }
 
-export async function getAdminProperties(page = 1, limit = 20) {
-  const { data } = await api.get('/admin/properties', { params: { page, limit } });
+export async function getAdminProperties(page = 1, limit = 20): Promise<AdminProperty[]> {
+  const { data } = await api.get<AdminProperty[]>('/admin/properties', { params: { page, limit } });
   return data;
 }
 

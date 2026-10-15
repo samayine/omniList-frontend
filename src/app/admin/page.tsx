@@ -6,8 +6,12 @@ import { Users, Building2, Globe, Heart, Archive, Shield, MoreHorizontal } from 
 import Image from 'next/image';
 import { toast } from 'sonner';
 
-import { getAdminMetrics, getAdminProperties, disablePropertyApi } from '@/features/admin/api/admin-api';
-import { Status } from '@/types';
+import {
+  getAdminMetrics,
+  getAdminProperties,
+  disablePropertyApi,
+  type AdminProperty,
+} from '@/features/admin/api/admin-api';
 
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -133,7 +137,7 @@ export default function AdminPage() {
                       </td>
                     </tr>
                   ) : (
-                    properties.map((prop: any) => (
+                    properties.map((prop: AdminProperty) => (
                       <tr key={prop.id} className="hover:bg-muted/30 transition-colors group">
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-3">

@@ -9,6 +9,7 @@ import {
   addFavoriteApi, 
   removeFavoriteApi 
 } from '@/features/properties/api/favorites-api';
+import axios from 'axios';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useAuthStore } from '@/features/auth/store/auth-store';
@@ -45,8 +46,8 @@ export function FavoriteButton({ propertyId, className }: FavoriteButtonProps) {
       queryClient.invalidateQueries({ queryKey: ['favorites'] });
       toast.success(isFavorited ? 'Removed from favorites' : 'Saved to favorites');
     },
-    onError: (err: any) => {
-      if (err?.response?.status === 401) {
+    onError: (err: unknown) => {
+      if (axios.isAxiosError(err) && err.response?.status === 401) {
         toast.error('Please login to save properties');
       } else {
         toast.error('Failed to update favorites');

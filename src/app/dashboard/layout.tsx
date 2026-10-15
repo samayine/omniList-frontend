@@ -1,16 +1,11 @@
 'use client';
 
-import { useAuthStore } from '@/features/auth/store/auth-store';
 import { DashboardNav } from '@/features/dashboard/components/dashboard-nav';
 import { Menu } from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
-  // Authentication is globally validated via middleware.ts cookies, 
-  // but client-side hydrated Zustand handles UI identity.
-  const { user } = useAuthStore();
 
   return (
     <div className="flex min-h-screen bg-zinc-50/50 dark:bg-black w-full overflow-hidden">

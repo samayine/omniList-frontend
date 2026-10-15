@@ -35,8 +35,13 @@ export function PropertyList({ initialData }: PropertyListProps) {
   const debouncedMin = useDebounce(minPrice, 500);
   const debouncedMax = useDebounce(maxPrice, 500);
 
-  // Reset to page 1 when filters change
-  useEffect(() => { setPage(1); }, [debouncedSearch, debouncedMin, debouncedMax]);
+  // Reset to page 1 when filters change (render-phase state adjustment)
+  const filterKey = `${debouncedSearch}|${debouncedMin}|${debouncedMax}`;
+  const [prevFilterKey, setPrevFilterKey] = useState(filterKey);
+  if (prevFilterKey !== filterKey) {
+    setPrevFilterKey(filterKey);
+    setPage(1);
+  }
 
   const isFiltering = debouncedSearch.length > 0 || debouncedMin.length > 0 || debouncedMax.length > 0;
 
@@ -138,7 +143,7 @@ export function PropertyList({ initialData }: PropertyListProps) {
           <div className="flex items-center justify-between text-xs text-muted-foreground px-1">
             <p>
               {meta.total} result{meta.total !== 1 ? 's' : ''} found
-              {debouncedSearch && <> for "<span className="font-medium text-foreground">{debouncedSearch}</span>"</>}
+              {debouncedSearch && <> for &quot;<span className="font-medium text-foreground">{debouncedSearch}</span>&quot;</>}
               {(debouncedMin || debouncedMax) && (
                 <> · {debouncedMin ? formatter.format(Number(debouncedMin)) : '$0'} – {debouncedMax ? formatter.format(Number(debouncedMax)) : '∞'}</>
               )}

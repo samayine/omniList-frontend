@@ -3,11 +3,10 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import { MoreHorizontal, Edit, Globe, Archive, ExternalLink, Trash2 } from 'lucide-react';
-import Link from 'next/link';
 import Image from 'next/image';
 import { toast } from 'sonner';
+import axios from 'axios';
 
-import { useAuthStore } from '@/features/auth/store/auth-store';
 import { getPropertiesApi, publishPropertyApi, archivePropertyApi, deletePropertyApi } from '@/features/properties/api/properties-api';
 import { Status } from '@/types';
 import { useRouter } from 'next/navigation';
@@ -29,7 +28,6 @@ const getBaseUrl = () => {
 const getImageUrl = (url: string) => url.startsWith('http') ? url : `${getBaseUrl()}${url}`;
 
 export default function MyListingsPage() {
-  const { user } = useAuthStore();
   const queryClient = useQueryClient();
   const router = useRouter();
 
@@ -44,8 +42,11 @@ export default function MyListingsPage() {
       toast.success('Property published!');
       queryClient.invalidateQueries({ queryKey: ['owner-properties'] });
     },
-    onError: (err: any) => {
-      const msg = err?.response?.data?.message || 'Failed to publish';
+    onError: (err: unknown) => {
+      let msg = 'Failed to publish';
+      if (axios.isAxiosError(err)) {
+        msg = err.response?.data?.message || msg;
+      }
       toast.error(Array.isArray(msg) ? msg[0] : msg);
     }
   });

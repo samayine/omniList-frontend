@@ -4,7 +4,6 @@ import { useQuery } from '@tanstack/react-query';
 import { getPropertyApi } from '@/features/properties/api/properties-api';
 import { PropertyForm } from '@/features/properties/components/property-form';
 import { Button } from '@/components/ui/button';
-import Link from 'next/link';
 import { ArrowLeft, Loader2 } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
 

@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { ChevronLeft, Home } from 'lucide-react';
 
 type PageHeaderProps = {
@@ -25,8 +24,6 @@ export function PageHeader({
   showHomeLink = true,
   action,
 }: PageHeaderProps) {
-  const router = useRouter();
-
   return (
     <div className="mb-10">
       {/* Breadcrumb row */}

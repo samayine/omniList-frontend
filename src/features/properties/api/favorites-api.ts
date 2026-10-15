@@ -2,8 +2,8 @@ import { api } from '@/lib/api-client';
 import type { Property } from '@/types';
 
 export const getFavoritesApi = async (): Promise<Property[]> => {
-  const { data } = await api.get('/favorites');
-  return data.map((fav: any) => fav.property);
+  const { data } = await api.get<{ property: Property }[]>('/favorites');
+  return data.map((fav) => fav.property);
 };
 
 export const addFavoriteApi = async (propertyId: string) => {

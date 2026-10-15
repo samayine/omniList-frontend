@@ -7,7 +7,12 @@ import { MoreHorizontal, Archive, RotateCcw, Edit } from 'lucide-react';
 import Image from 'next/image';
 import { toast } from 'sonner';
 
-import { getAdminProperties, disablePropertyApi, restorePropertyApi } from '@/features/admin/api/admin-api';
+import {
+  getAdminProperties,
+  disablePropertyApi,
+  restorePropertyApi,
+  type AdminProperty,
+} from '@/features/admin/api/admin-api';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -99,7 +104,7 @@ export default function AdminPropertiesPage() {
                   </td>
                 </tr>
               ) : (
-                properties.map((prop: any) => (
+                properties.map((prop: AdminProperty) => (
                   <tr key={prop.id} className="hover:bg-muted/30 transition-colors group">
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">

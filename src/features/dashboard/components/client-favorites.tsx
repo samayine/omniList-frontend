@@ -1,8 +1,7 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import { Heart, Loader2, Building2 } from 'lucide-react';
-import Link from 'next/link';
+import { Heart, Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 import { getFavoritesApi } from '@/features/properties/api/favorites-api';
@@ -41,7 +40,7 @@ export function ClientFavorites() {
         </div>
         <h3 className="text-2xl font-bold tracking-tight mb-2">No Saved Properties</h3>
         <p className="text-muted-foreground max-w-sm mb-8">
-          You haven't saved any listings yet. Explore our featured properties and tap the heart icon to save them here.
+          You haven&apos;t saved any listings yet. Explore our featured properties and tap the heart icon to save them here.
         </p>
         <Button onClick={() => router.push('/')} size="lg" className="rounded-full px-8">
           Explore Listings

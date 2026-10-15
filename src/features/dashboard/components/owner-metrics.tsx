@@ -1,4 +1,4 @@
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Building2, Globe, FileText, BarChart3 } from 'lucide-react';
 import { Property, Status } from '@/types';
 

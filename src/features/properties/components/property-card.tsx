@@ -1,11 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
-import { MapPin, Bed, Bath } from "lucide-react";
+import { MapPin } from "lucide-react";
 
 import {
   Card,
   CardContent,
-  CardFooter,
   CardHeader,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";

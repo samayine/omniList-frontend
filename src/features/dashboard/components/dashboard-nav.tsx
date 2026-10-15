@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useSyncExternalStore } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { LayoutDashboard, Building2, PlusCircle, Settings, LogOut, Heart, Users, BarChart3, List } from 'lucide-react';
@@ -11,15 +11,20 @@ import { Role } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 
+const emptySubscribe = () => () => {};
+function useIsClient() {
+  return useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false,
+  );
+}
+
 export function DashboardNav() {
   const pathname = usePathname();
   const router = useRouter();
   const { user, logout } = useAuthStore();
-  const [isClient, setIsClient] = useState(false);
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
+  const isClient = useIsClient();
 
   const handleLogout = () => {
     logout();

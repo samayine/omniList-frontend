@@ -8,6 +8,7 @@ import * as z from 'zod';
 import { toast } from 'sonner';
 import { X, UploadCloud, Loader2 } from 'lucide-react';
 import Image from 'next/image';
+import axios from 'axios';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -151,8 +152,11 @@ export function PropertyForm({ initialData }: PropertyFormProps) {
       router.push('/dashboard');
       router.refresh(); // Invalidate server components to instantly show new properties natively!
       
-    } catch (error: any) {
-      const msg = error?.response?.data?.message || 'Failed to save property';
+    } catch (error: unknown) {
+      let msg = 'Failed to save property';
+      if (axios.isAxiosError(error)) {
+        msg = error.response?.data?.message || msg;
+      }
       toast.error(Array.isArray(msg) ? msg[0] : msg);
     } finally {
       setIsUploading(false);

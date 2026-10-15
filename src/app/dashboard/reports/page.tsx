@@ -1,7 +1,7 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import { Users, Building2, Globe, Archive, Heart, FileText, TrendingUp } from 'lucide-react';
+import { Users, Building2, Globe, Archive, Heart, TrendingUp } from 'lucide-react';
 
 import { getAdminMetrics } from '@/features/admin/api/admin-api';
 

@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { MapPin, ArrowLeft, Building2, Calendar, Share, Heart } from 'lucide-react';
+import { MapPin, ArrowLeft, Building2, Calendar } from 'lucide-react';
 
 import { Property, Status } from '@/types';
 import { PropertyGallery } from '@/features/properties/components/property-gallery';
